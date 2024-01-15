@@ -14,6 +14,8 @@ namespace AuktionProjekt.Controllers
         [Authorize]
         public IActionResult PlaceBid(Bid bid)
         {
+            // Logic to place a bid for an auction
+            
             return Ok();
         }
 
@@ -21,7 +23,8 @@ namespace AuktionProjekt.Controllers
         [Authorize]
         public IActionResult GetBidDetails(int bidId)
         {
-
+            // Logic to get details of a specific bid
+  
             return Ok();
         }
 
@@ -29,7 +32,8 @@ namespace AuktionProjekt.Controllers
         [Authorize]
         public IActionResult GetBidsForAuction(int auctionId)
         {
- 
+            // Logic to get all bids for a specific auction
+
             return Ok();
         }
 
@@ -37,6 +41,8 @@ namespace AuktionProjekt.Controllers
         [Authorize]
         public IActionResult CancelBid(int bidId)
         {
+            // Logic to cancel a bid
+
             return Ok();
         }
     }

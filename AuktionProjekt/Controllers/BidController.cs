@@ -21,7 +21,7 @@ namespace AuktionProjekt.Controllers
 
         [HttpGet("{bidId}")]
         [Authorize]
-        public IActionResult GetBidDetails(int bidId)
+        public IActionResult GetBidDetails(int bidId) //Kommer nog inte behöva det
         {
             // Logic to get details of a specific bid
   
@@ -36,15 +36,22 @@ namespace AuktionProjekt.Controllers
 
             return Ok();
         }
-
-        [HttpDelete("{bidId}")]
-        [Authorize]
-        public IActionResult CancelBid(int bidId)
+        [HttpGet("{auctionID}")]
+        public IActionResult GetWinningBid(int auctionID)
         {
             // Logic to cancel a bid
 
             return Ok();
         }
+
+
+        //[HttpDelete("{bidId}")]
+        //[Authorize]
+        //public IActionResult CancelBid(int bidId)
+        //{
+        //    return Ok();
+        //}
+        // Vi kommer inte behöva det
     }
 }
 

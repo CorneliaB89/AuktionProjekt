@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Models\DTO\" />
     <Folder Include="Models\Profiles\" />
     <Folder Include="Repository\Interfaces\" />
     <Folder Include="Repository\Repo\" />

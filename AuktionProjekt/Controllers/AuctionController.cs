@@ -20,7 +20,7 @@ namespace AuktionProjekt.Controllers
 
         [HttpGet("{auctionId}")]
         [Authorize]
-        public IActionResult GetAuctionDetails(int auctionId)
+        public IActionResult GetAuctionDetails(int auctionId) //Kanske inte behöver .............
         {
             // Logic to get details of a specific auction
             return Ok();
@@ -36,7 +36,7 @@ namespace AuktionProjekt.Controllers
 
         [HttpGet("{auctionId}/bids")]
         [Authorize]
-        public IActionResult GetBidsForAuction(int auctionId)
+        public IActionResult GetBidsForAuction(int auctionId) //Har flyttat denna i bidControllern (kan ta bort) ..........
         {
             // Logic to get all bids for a specific auction
             return Ok();
@@ -44,7 +44,7 @@ namespace AuktionProjekt.Controllers
 
         [HttpGet("{auctionId}/user")]
         [Authorize]
-        public IActionResult GetAuctionOwner(int auctionId)
+        public IActionResult GetAuctionOwner(int auctionId)  //Behövs inte (kan ta bort) ...........
         {
             // Logic to get the user (owner) of a specific auction
             return Ok();
@@ -52,9 +52,14 @@ namespace AuktionProjekt.Controllers
 
         [HttpDelete("{auctionId}")]
         [Authorize]
-        public IActionResult CloseAuction(int auctionId)
+        public IActionResult CloseAuction(int auctionId)  // kommer ej behövas (kan ta bort) ..........
         {
             // Logic to close an auction
+            return Ok();
+        }
+        [HttpGet]
+        public IActionResult SearchAuction(string title) 
+        {
             return Ok();
         }
     }

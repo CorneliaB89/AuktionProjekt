@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AuktionProjekt.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuktionProjekt.Controllers
@@ -7,5 +9,23 @@ namespace AuktionProjekt.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+
+        [HttpPost]
+        public IActionResult CreateUser(User user)
+        {
+            return Ok();
+        }
+        [HttpPost]
+        public IActionResult Login(string username, string password)
+        {
+            return Ok();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult UpdateUser(User user)
+        {
+            return Ok();
+        }
     }
 }

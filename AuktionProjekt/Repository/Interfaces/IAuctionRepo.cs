@@ -6,9 +6,11 @@ namespace AuktionProjekt.Models.Repositories
     public interface IAuctionRepo
     {
         void CreateAuction(Auction auction);
-        Auction GetAuctionById(int auctionId);
-        IEnumerable<Auction> GetAllAuctions();
-        void CloseAuction(int auctionId);
-        // Lägg till flera metoder för att synka med databsen.
+        void DeleteAuction(int auctionId);
+        void UpdateAuction(Auction auction);
+        List<Auction>? SearchAuctions(string search);
+        Auction? GetAuctionById(int auctionId);
+        List<Auction> GetAllAuctions();
+                
     }
 }

@@ -39,6 +39,7 @@ namespace AuktionProjekt.Repository.Repo
         {
             using (IDbConnection db = /*Databasconnectionstring*/)
             {
+                // Mappar så att UserId hamnar i Auction.User.UserID
                 var searchedAuctions = db.Query<Auction, User, Auction>("GetAllAuctions",
                       (auctions, user) =>
                       {
@@ -57,14 +58,15 @@ namespace AuktionProjekt.Repository.Repo
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", auctionId);
 
-                var searchedAuctions = db.QuerySingleOrDefault<Auction, User, Auction>("GetAuctionById",
+                // Mappar så att UserId hamnar i Auction.User.UserID
+                var searchedAuctions = db.Query<Auction, User, Auction>("GetAuctionById",
                     (auctions, user) =>
                     {
                         auctions.User = user;
                         return auctions;
 
                     }, param: parameters,
-                    splitOn: "UserID", commandType: CommandType.StoredProcedure);
+                    splitOn: "UserID", commandType: CommandType.StoredProcedure).SingleOrDefault();
                 return searchedAuctions;
             }
         }
@@ -76,6 +78,7 @@ namespace AuktionProjekt.Repository.Repo
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@Search", search);
 
+                // Mappar så att UserId hamnar i Auction.User.UserID
                 var searchedAuctions = db.Query<Auction, User, Auction>("SearchAuction",
                     (auctions, user) =>
                     {

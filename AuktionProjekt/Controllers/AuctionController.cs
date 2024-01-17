@@ -3,6 +3,7 @@ using AuktionProjekt.Models.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AuktionProjekt.Controllers
 {
@@ -14,8 +15,8 @@ namespace AuktionProjekt.Controllers
         private readonly IBidRepo _bidRepo;
         public AuctionController(IAuctionRepo auctionRepo, IBidRepo bidRepo)
         {
-            _auctionRepo = auctionRepo
-                _bidRepo = bidRepo
+            _auctionRepo = auctionRepo;
+            _bidRepo = bidRepo;
         }
 
         // Logik för att skapa en auktion.
@@ -23,8 +24,7 @@ namespace AuktionProjekt.Controllers
         [Authorize]
         public IActionResult CreateAuction(Auction auction)
         {
-            if (auction.Title == null || auction.Description == null || auction.Price == null
-
+            if (auction.Title == null || auction.Description == null || auction.Price.ToString() == null)
                 return BadRequest("Glöm inte att lägga till all information");
 
             var inloged = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -37,8 +37,8 @@ namespace AuktionProjekt.Controllers
         [HttpGet]
         public IActionResult GetAllAuctions()
         {
-            var allAuctions = _auctionRepo.GetAllAuctions
-                var activeAuctions = new List<Auction>();
+            var allAuctions = _auctionRepo.GetAllAuctions();
+            var activeAuctions = new List<Auction>();
             foreach (var action in allAuctions)
             {
                 if (action.EndDate < DateTime.Now)
@@ -79,7 +79,10 @@ namespace AuktionProjekt.Controllers
             var loggedInUserID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             //Kolla behörighet för vald acution.
-            Auction auction = _auctionRepo.GetAuctionById(auctionID);
+            var auction = _auctionRepo.GetAuctionById(auctionID);
+
+            if (auction is null)
+                return BadRequest("Finns ingen auction med detta id");
 
             if (auction.User.UserID != int.Parse(loggedInUserID))
             {
@@ -97,3 +100,5 @@ namespace AuktionProjekt.Controllers
                 return BadRequest("Auktionen har bud och kan inte tas bort");
             }
         }
+    }
+}

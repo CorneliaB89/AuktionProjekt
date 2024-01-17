@@ -30,7 +30,7 @@ namespace AuktionProjekt.Controllers
             var inloged = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             auction.User.UserID = int.Parse(inloged);
             _auctionRepo.CreateAuction(auction);
-            return Ok();
+            return Ok("Auction skapad");
         }
 
         //Logik för att ta fram alla auktioner.

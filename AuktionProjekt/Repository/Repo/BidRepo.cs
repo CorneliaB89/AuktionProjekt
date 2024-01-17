@@ -1,22 +1,26 @@
 ﻿using AuktionProjekt.Models.Entities;
+using Dapper;
 using System.Data;
 
 namespace AuktionProjekt.Repository.Repo
 {
     public class BidRepo
     {
-        public List<Auction> GetBid() //Osäker om jag har tänkt rätt
+        public List<Bid> GetBid(int auctionID) 
         {
             using (IDbConnection db = /*Databasconnectionstring*/)
             {
-                
-                var searchedBids = db.Query<Auction, Bid, Auction>("GetBid",
-                      (auctions, bids) =>
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@AuctionID", auctionID);
+
+                var searchedBids = db.Query<Bid, User,Auction, Bid>("GetBid",
+                      (bids,user,auctions) =>
                       {
-                          auctions.Bids = bids;
+                          bids.User = user;
+                          bids.Auction= auctions;
                           return bids;
 
-                      }, splitOn: "AuctionID", commandType: CommandType.StoredProcedure).ToList();
+                      },param:parameters, splitOn: "Username,AuctionID", commandType: CommandType.StoredProcedure).ToList();
                 return searchedBids;
             }
         }

@@ -4,7 +4,7 @@ using System.IO;
 
 public class AuctionDbContext : DbContext
 {
-    private readonly string _connectionString;
+    public readonly string _connectionString;
 
     public AuctionDbContext()
     {

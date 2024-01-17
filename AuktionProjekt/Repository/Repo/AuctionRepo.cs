@@ -8,9 +8,12 @@ namespace AuktionProjekt.Repository.Repo
 {
     public class AuctionRepo : IAuctionRepo
     {
+        AuctionDbContext context = new AuctionDbContext();
+        
+
         public void CreateAuction(Auction auction)
         {
-            using (IDbConnection db = /*Databasconnectionstring*/)
+            using (IDbConnection db = new SqlConnection(context._connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@Title", auction.Title);
@@ -26,7 +29,7 @@ namespace AuktionProjekt.Repository.Repo
 
         public void DeleteAuction(int auctionId)
         {
-            using (IDbConnection db = /*Databasconnectionstring*/)
+            using (IDbConnection db = new SqlConnection(context._connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", auctionId);
@@ -37,7 +40,7 @@ namespace AuktionProjekt.Repository.Repo
 
         public List<Auction> GetAllAuctions()
         {
-            using (IDbConnection db = /*Databasconnectionstring*/)
+            using (IDbConnection db = new SqlConnection(context._connectionString))
             {
                 // Mappar så att UserId hamnar i Auction.User.UserID
                 var searchedAuctions = db.Query<Auction, User, Auction>("GetAllAuctions",
@@ -53,7 +56,7 @@ namespace AuktionProjekt.Repository.Repo
 
         public Auction? GetAuctionById(int auctionId)
         {
-            using (IDbConnection db = /*Databasconnectionstring*/)
+            using (IDbConnection db = new SqlConnection(context._connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", auctionId);
@@ -73,7 +76,7 @@ namespace AuktionProjekt.Repository.Repo
 
         public List<Auction>? SearchAuctions(string search)
         {
-            using (IDbConnection db = /*Databasconnectionstring*/)
+            using (IDbConnection db = new SqlConnection(context._connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@Search", search);
@@ -93,7 +96,7 @@ namespace AuktionProjekt.Repository.Repo
 
         public void UpdateAuction(Auction auction)
         {
-            using (IDbConnection db = /*Databasconnectionstring*/)
+            using (IDbConnection db = new SqlConnection(context._connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", auction.AuctionID);

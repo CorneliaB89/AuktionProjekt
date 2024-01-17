@@ -35,7 +35,7 @@ namespace AuktionProjekt.Repository.Repo
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", bid.Auction.AuctionID);
-                parameters.Add("@UserID", bid.User.UserName);
+                parameters.Add("@UserID", bid.User.UserID);
                 parameters.Add("@Price", bid.Price);
                 parameters.Add("@BidTime",DateTime.Now);
 

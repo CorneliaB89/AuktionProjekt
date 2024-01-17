@@ -21,7 +21,7 @@ namespace AuktionProjekt.Controllers
 
         [HttpGet("{bidId}")]
         [Authorize]
-        public IActionResult GetBidDetails(int bidId) //Kommer nog inte behöva det
+        public IActionResult GetBidDetails(int bidId) //Kommer nog inte behöva det,(kommer att behöva för att se vem som har gjort budet.
         {
             // Logic to get details of a specific bid
   
@@ -43,15 +43,6 @@ namespace AuktionProjekt.Controllers
 
             return Ok();
         }
-
-
-        //[HttpDelete("{bidId}")]
-        //[Authorize]
-        //public IActionResult CancelBid(int bidId)
-        //{
-        //    return Ok();
-        //}
-        // Vi kommer inte behöva det
     }
 }
 

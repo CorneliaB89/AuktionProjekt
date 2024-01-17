@@ -1,5 +1,6 @@
 ﻿using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Models.Repositories;
+using AuktionProjekt.Repository.Interfaces;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -8,12 +9,16 @@ namespace AuktionProjekt.Repository.Repo
 {
     public class BidRepo:IBidRepo
     {
-        AuctionDbContext _context = new AuctionDbContext();
+        private readonly IAucktionDBContext _dbContext;
+        public BidRepo(IAucktionDBContext aucktionDBContext)
+        {
+            _dbContext = aucktionDBContext;
+        }
         public List<Bid> GetBid(int auctionID) 
         {
             
 
-            using (IDbConnection db =  new SqlConnection(_context._connectionString))
+            using (IDbConnection db =  _dbContext.GetConnection())
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", auctionID);
@@ -31,7 +36,7 @@ namespace AuktionProjekt.Repository.Repo
         }
         public void PlaceBid (Bid bid)
         {
-            using (IDbConnection db = new SqlConnection(_context._connectionString))
+            using (IDbConnection db = _dbContext.GetConnection())
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", bid.Auction.AuctionID);

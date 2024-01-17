@@ -1,6 +1,8 @@
 
 
 using AuktionProjekt.Models.Repositories;
+using AuktionProjekt.Repository;
+using AuktionProjekt.Repository.Interfaces;
 using AuktionProjekt.Repository.Repo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -75,6 +77,8 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IAuctionRepo, AuctionRepo>();
 builder.Services.AddScoped<IBidRepo, IBidRepo>();
 builder.Services.AddScoped<IUserRepo, IUserRepo>();
+
+builder.Services.AddSingleton<IAucktionDBContext, AuctionDBContext>();
 
 var app = builder.Build();
 

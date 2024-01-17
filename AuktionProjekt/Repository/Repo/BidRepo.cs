@@ -8,11 +8,12 @@ namespace AuktionProjekt.Repository.Repo
 {
     public class BidRepo:IBidRepo
     {
+        AuctionDbContext _context = new AuctionDbContext();
         public List<Bid> GetBid(int auctionID) 
         {
-            AuctionDbContext context = new AuctionDbContext();
+            
 
-            using (IDbConnection db = new SqlConnection(context._connectionString))
+            using (IDbConnection db =  new SqlConnection(_context._connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", auctionID);
@@ -30,7 +31,7 @@ namespace AuktionProjekt.Repository.Repo
         }
         public void PlaceBid (Bid bid)
         {
-            using (IDbConnection db =/*Databasconnectionstring*/ )
+            using (IDbConnection db = new SqlConnection(_context._connectionString))
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@AuctionID", bid.Auction.AuctionID);

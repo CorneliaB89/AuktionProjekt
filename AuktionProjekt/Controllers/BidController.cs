@@ -1,7 +1,9 @@
 ﻿using AuktionProjekt.Models.Entities;
+using AuktionProjekt.Models.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 
 namespace AuktionProjekt.Controllers
 {
@@ -9,40 +11,64 @@ namespace AuktionProjekt.Controllers
     [ApiController]
     public class BidController : ControllerBase
     {
+        private readonly IBidRepo _bidRepo;
+        private readonly IAuctionRepo _askRepo;
+       
 
+        public BidController(IBidRepo bidRepo,IAuctionRepo askRepo)
+        {
+            _bidRepo = bidRepo;
+            _askRepo = askRepo;
+        }
         [HttpPost]
         [Authorize]
         public IActionResult PlaceBid(Bid bid)
         {
-            // Logic to place a bid for an auction
-            
-            return Ok();
+            var auction = _askRepo.GetAuctionById(bid.Auction.AuctionID);
+           var bids = _bidRepo.GetBid(bid.Auction.AuctionID);
+            if (auction.EndDate < DateTime.Now)
+                return BadRequest("Den här auktion är stängd");
+
+
+            foreach (var b in bids)
+            {
+                if (b.Price < bid.Price)
+                    return BadRequest("Du kan inte lägga ett lägre bud än det högsta redan lagda.");
+              
+            }
+           
+
+            _bidRepo.PlaceBid(bid);
+            return Ok("Bud har lagts");
+              
+           
         }
 
-        [HttpGet("{bidId}")]
+
+      
+        [HttpGet("{auctionId}")]
         [Authorize]
-        public IActionResult GetBidDetails(int bidId) //Kommer nog inte behöva det,(kommer att behöva för att se vem som har gjort budet.
+        public IActionResult GetBid(int auctionId)
         {
-            // Logic to get details of a specific bid
-  
-            return Ok();
-        }
+            var bids = _bidRepo.GetBid(auctionId);
 
-        [HttpGet("auction/{auctionId}")]
-        [Authorize]
-        public IActionResult GetBidsForAuction(int auctionId)
-        {
-            // Logic to get all bids for a specific auction
+            if (bids == null)
+            {
+                return NotFound(); 
+            }
 
-            return Ok();
+            return Ok(bids);
         }
-        [HttpGet("{auctionID}")]
-        public IActionResult GetWinningBid(int auctionID)
-        {
-            // Logic to cancel a bid
+    }
 
-            return Ok();
-        }
+
+        //[HttpGet("{auctionID}")]
+        //public IActionResult GetWinningBid(int auctionID)
+        //{
+        //    // Logic to cancel a bid
+
+        //    return Ok();
+        //}
     }
 }
 

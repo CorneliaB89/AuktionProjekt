@@ -47,15 +47,8 @@ namespace AuktionProjekt.Controllers
         {
             try
             {
-                var allAuctions = _auctionRepo.GetAllAuctions();
-                var activeAuctions = new List<Auction>();
-                foreach (var action in allAuctions)
-                {
-                    if (action.EndDate < DateTime.Now)
-                    {
-                        activeAuctions.Add(action);
-                    }
-                }
+                var activeAuctions = _auctionRepo.GetAllAuctions().Where(a => a.EndDate < DateTime.Now);
+               
                 return Ok(activeAuctions);
             }
             catch (Exception)

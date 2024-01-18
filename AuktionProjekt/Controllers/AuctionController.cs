@@ -73,7 +73,7 @@ namespace AuktionProjekt.Controllers
         public IActionResult DeleteAuction(int auctionID)
         {
             // Hämta bud för auktionen
-            var bids = _bidRepo.GetBid(auctionID);
+            var bids = _bidRepo.GetBids(auctionID);
 
             // Hämta specific userId.
             var loggedInUserID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

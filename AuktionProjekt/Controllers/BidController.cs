@@ -30,30 +30,38 @@ namespace AuktionProjekt.Controllers
         [Authorize]
         public IActionResult PlaceBid(Bid bid)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            bid.User.UserID = int.Parse(userId);
-
-            var auction = _askRepo.GetAuctionById(bid.Auction.AuctionID);
-
-            if (auction is null)
-                return NotFound("Den här auctionen finns inte");
-
-            var bids = _bidRepo.GetBids(bid.Auction.AuctionID);
-
-            if (auction.EndDate < DateTime.Now)
-                return BadRequest("Den här auktion är stängd");
-
-            if (auction.User.UserID == bid.User.UserID)
-                return BadRequest("Du kan inte lägga bud på din egen auktion");
-
-            foreach (var b in bids)
+            try
             {
-                if (b.Price <= bid.Price)
-                    return BadRequest("Du måste lägga ett högre bud än vad som redan är lagt.");
-            }
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                bid.User.UserID = int.Parse(userId);
 
-            _bidRepo.PlaceBid(bid);
-            return Ok($"Bud på {bid.Price} kr är lagt.");
+                var auction = _askRepo.GetAuctionById(bid.Auction.AuctionID);
+
+                if (auction is null)
+                    return NotFound("Den här auctionen finns inte");
+
+                var bids = _bidRepo.GetBids(bid.Auction.AuctionID);
+
+                if (auction.EndDate < DateTime.Now)
+                    return BadRequest("Den här auktion är stängd");
+
+                if (auction.User.UserID == bid.User.UserID)
+                    return BadRequest("Du kan inte lägga bud på din egen auktion");
+
+                foreach (var b in bids)
+                {
+                    if (b.Price <= bid.Price)
+                        return BadRequest("Du måste lägga ett högre bud än vad som redan är lagt.");
+                }
+
+                _bidRepo.PlaceBid(bid);
+                return Ok($"Bud på {bid.Price} kr är lagt.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error, Placing Bid");
+                throw;
+            }
         }
 
 
@@ -62,38 +70,54 @@ namespace AuktionProjekt.Controllers
         [Authorize]
         public IActionResult GetBids(int auctionId)
         {
-            var bids = _bidRepo.GetBids(auctionId);
-
-            if (bids == null)
+            try
             {
-                return NotFound();
-            }
+                var bids = _bidRepo.GetBids(auctionId);
 
-            return Ok(bids);
+                if (bids == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(bids);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error, Get Bids");
+                throw;
+            }
         }
 
         [Route("WinningBid")]
         [HttpGet("{auctionID}")]
         public IActionResult GetWinningBid(int AuctionID)
         {
-            var auction = _askRepo.GetAuctionById(AuctionID);
-            if (auction is null)
-                return NotFound("Den här auctionen finns inte");
-
-            if (auction.EndDate > DateTime.Now)
-                return BadRequest("Den här auktion är fortfarande öppen");
-
-            var highestbid = new Bid() { Price = 0 };
-
-            var bids = _bidRepo.GetBids(AuctionID);
-            foreach (var b in bids)
+            try
             {
-                if (b.Price > highestbid.Price)
-                    highestbid = b;
-            }
-            var Winningbid = _mapper.Map<Bid>(highestbid);
+                var auction = _askRepo.GetAuctionById(AuctionID);
+                if (auction is null)
+                    return NotFound("Den här auctionen finns inte");
 
-            return Ok(Winningbid);
+                if (auction.EndDate > DateTime.Now)
+                    return BadRequest("Den här auktion är fortfarande öppen");
+
+                var highestbid = new Bid() { Price = 0 };
+
+                var bids = _bidRepo.GetBids(AuctionID);
+                foreach (var b in bids)
+                {
+                    if (b.Price > highestbid.Price)
+                        highestbid = b;
+                }
+                var Winningbid = _mapper.Map<Bid>(highestbid);
+
+                return Ok(Winningbid);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Error, WiningBid");
+                throw;
+            }
         }
     }
 

@@ -15,7 +15,11 @@ namespace AuktionProjekt.Models.Profiles
                 .ForMember(dest => dest.Description,
                 opt => opt.MapFrom(src => src.Auction.Description))
                 .ForMember(dest => dest.WinningBid,
-                opt => opt.MapFrom(src => src.Price));
+                opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.WinningBidTime,
+                opt => opt.MapFrom(src => src.BitTime))
+                .ForMember(dest => dest.AuctionEndTime,
+                opt => opt.MapFrom(src => src.Auction.EndDate));
         }
         
     }

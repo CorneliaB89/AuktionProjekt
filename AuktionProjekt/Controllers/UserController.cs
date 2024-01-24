@@ -19,6 +19,7 @@ namespace AuktionProjekt.Controllers
         {
             return Ok();
         }
+        [Route("Login")]
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
@@ -53,7 +54,7 @@ namespace AuktionProjekt.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         public IActionResult UpdateUser(User user)
         {

@@ -74,9 +74,8 @@ namespace AuktionProjekt.Controllers
                 throw;
             }
         }
-
+        [HttpGet]
         [Route("WinningBid")]
-        [HttpGet("{auctionID}")]
         public IActionResult GetWinningBid(int AuctionID)
         {
             try

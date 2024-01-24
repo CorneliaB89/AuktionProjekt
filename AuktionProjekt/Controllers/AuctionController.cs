@@ -59,7 +59,7 @@ namespace AuktionProjekt.Controllers
         }
 
         //logik för att söka på auktioner.
-        [HttpGet]
+        [HttpGet("{search}")]
         public IActionResult SearchAuctions(string search)
         {
             try

@@ -64,8 +64,8 @@ builder.Services.AddAuthentication(opt =>
         ValidateAudience = true,            //Validerar att det är en verifierad användare
         ValidateLifetime = true,            //Validerar att aktuell token fortfarande gäller
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "http://localhost:5042",      //Validerar URL där token har satts upp
-        ValidAudience = "http://localhost:5042",    //Validerar URl som api ligger på
+        ValidIssuer = "http://localhost:5071",      //Validerar URL där token har satts upp
+        ValidAudience = "http://localhost:5071",    //Validerar URl som api ligger på
         IssuerSigningKey =
     new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysecretKey12345!#kjbgfoilkjgtiyduglih7gtl8gt5"))     //Här sätts krypteringen upp med en nyckel som egentligen inte skall ligga direkt här ("mysecretKey12345!#")
     };

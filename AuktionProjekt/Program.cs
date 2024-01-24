@@ -75,8 +75,8 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IAuctionRepo, AuctionRepo>();
-builder.Services.AddScoped<IBidRepo, IBidRepo>();
-builder.Services.AddScoped<IUserRepo, IUserRepo>();
+builder.Services.AddScoped<IBidRepo, BidRepo>();
+//builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 builder.Services.AddSingleton<IAucktionDBContext, AuctionDBContext>();
 

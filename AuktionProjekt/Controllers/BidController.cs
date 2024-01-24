@@ -89,7 +89,8 @@ namespace AuktionProjekt.Controllers
                     return NotFound("Denna auctionfinns inte.");
                 if (number == 1)
                     return BadRequest("Den här auktion är fortfarande öppen");
-
+                if (number == -1)
+                    return NotFound("Det finns inga bud på denna aktion.");
                 return Ok(winningbid);
             }
             catch (Exception)

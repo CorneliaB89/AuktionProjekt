@@ -38,6 +38,10 @@ namespace AuktionProjekt.ServiceLayer.Service
             var highestbid = new Bid() { Price = 0 };
 
             var bids = _bidRepo.GetBids(AuctionID);
+
+            if (bids is null)
+                return Tuple.Create(bidDTO, -1);
+
             foreach (var b in bids)
             {
                 if (b.Price > highestbid.Price)

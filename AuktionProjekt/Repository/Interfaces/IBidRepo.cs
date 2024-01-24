@@ -7,7 +7,7 @@ namespace AuktionProjekt.Models.Repositories
     {
         void PlaceBid(Bid bid);
 
-        List<Bid> GetBids(int auctionID);
+        List<Bid>? GetBids(int auctionID);
     }
 }
 

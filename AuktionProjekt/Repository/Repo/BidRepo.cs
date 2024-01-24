@@ -14,7 +14,7 @@ namespace AuktionProjekt.Repository.Repo
         {
             _dbContext = aucktionDBContext;
         }
-        public List<Bid> GetBids(int auctionID) 
+        public List<Bid>? GetBids(int auctionID) 
         {
             
 

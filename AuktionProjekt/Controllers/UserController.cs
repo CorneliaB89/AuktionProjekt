@@ -1,5 +1,6 @@
 ﻿using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Repository.Repo;
+using AuktionProjekt.ServiceLayer.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,76 +15,57 @@ namespace AuktionProjekt.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // NY KOD 2024.01.25,04:01 /Charbel
-        // Skapar constructor för att tillåta UserController använda UserRepo
-        private readonly UserRepo _userRepo;
+        private readonly IUserService _userService;
 
-        public UserController(UserRepo userRepo)
+        public UserController(IUserService userService)
         {
-            _userRepo = userRepo;
-        } //SLUT
-
+            _userService = userService;
+        }
+        [Route("Create/User")]
         [HttpPost]
         public IActionResult CreateUser(User user)
         {
-            // NY KOD 2024.01.25,12:51 /Charbel
-            _userRepo.CreateUser(user);
-            return Ok(); //SLUT
+
+            bool check = _userService.CreateUser(user);
+            if (check)
+                return Ok("Kund skapad");
+
+            return StatusCode(400, "Error, användare kunde ej skapas.");
         }
         [Route("Login")]
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            // NY KOD 2024.01.25,04:11 /Charbel
-            // Kör repometoden för att kolla inloggningen -> Done
-            // om den är null retunera badrequest("Invalied login") -> Done
-            var user = _userRepo.LoginUser(username, password);
-
-            if (user == null)
+            try
             {
-                return BadRequest("Felaktig inloggning, försök igen!");
-            } // SLUT
+                string tokenString = _userService.Login(username, password);
 
+                if (string.IsNullOrEmpty(tokenString))
+                    return BadRequest("Felaktig inloggning");
 
-
-
-            //gör en haskoll på Lösenordet
-
-            List<Claim> claims = new List<Claim>();
-            // NY KOD 2024.01.25,12:42 /Charbel
-            //lägg till UserID i claim.nameindentifier -> DONE
+                return Ok(new { Token = tokenString });
+            }
+            catch (Exception)
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString());
-            };
-
-            //Sätta upp kryptering. Samma säkerhetsnyckel som när vi satte upp tjänsten
-            //Denna förvaras på ett säkert ställe tex Azure Keyvault eller liknande och hårdkodas
-            //inte in på detta sätt
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysecretKey12345!#kjbgfoilkjgtiyduglih7gtl8gt5"));
-
-            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-            //Skapa options för att sätta upp en token
-            var tokenOptions = new JwtSecurityToken(
-                    issuer: "http://localhost:5042",
-                    audience: "http://localhost:5042",
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: signinCredentials);
-
-            //Generar en ny token som skall skickas tillbaka 
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-
-            return Ok(new { Token = tokenString });
+                return StatusCode(500,"ERROR, login");
+                throw;
+            }
 
         }
-
+        [Route("Updaate/User")]
         [HttpPut]
         [Authorize]
         public IActionResult UpdateUser(User user)
         {
-            _userRepo.UpdateUser(user);
-            return Ok();
+            var inlogedUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            user.UserID = int.Parse(inlogedUser);
+
+            bool check = _userService.UpdateUser(user);
+
+            if (check)
+                return Ok("Ditt konto är uppdterat");
+
+            return StatusCode(400, "Kunde inte uppdatera");
         }
     }
 }

@@ -18,7 +18,7 @@ namespace AuktionProjekt.Repository.Repo
             _dbContext = aucktionDBContext;
         }
 
-        // LoginUser KLAR
+        // LoginUser Method
         public User? LoginUser(string username, string password)
         {
             using (IDbConnection db = _dbContext.GetConnection())
@@ -35,10 +35,23 @@ namespace AuktionProjekt.Repository.Repo
 
         // Update Method
 
+        public void UpdateUser(int userID, string username, string password)
+        {
+            using (IDbConnection db = _dbContext.GetConnection())
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserID", userID);
+                parameters.Add("@Username", username);
+                parameters.Add("@Password", password);
+
+                db.Execute("UpdateUser", parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
 
 
 
-        // Create User method KLAR 
+
+        // Create User method
         public void CreateUser(string username, string password)
         {
             using (IDbConnection db = _dbContext.GetConnection())

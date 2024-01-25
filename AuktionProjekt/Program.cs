@@ -4,6 +4,8 @@ using AuktionProjekt.Models.Repositories;
 using AuktionProjekt.Repository;
 using AuktionProjekt.Repository.Interfaces;
 using AuktionProjekt.Repository.Repo;
+using AuktionProjekt.ServiceLayer.IService;
+using AuktionProjekt.ServiceLayer.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -11,11 +13,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddControllers();
-
-
-
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -75,8 +73,11 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IAuctionRepo, AuctionRepo>();
+builder.Services.AddScoped<IAuctionService, AuctionService>();
 builder.Services.AddScoped<IBidRepo, BidRepo>();
-//builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<IBidService, BidService>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<IUserService,  UserService>();
 
 builder.Services.AddSingleton<IAucktionDBContext, AuctionDBContext>();
 

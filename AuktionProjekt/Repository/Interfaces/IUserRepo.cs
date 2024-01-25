@@ -5,11 +5,12 @@ namespace AuktionProjekt.Models.Repositories
 {
     public interface IUserRepo
     {
-        void CreateUser(User user);
-        User GetUserById(int userId);
-        IEnumerable<User> GetAllUsers();
+        User? LoginUser(string username, string password);
+
         void UpdateUser(User user);
-        // lägg till flera metoder för att synka med databsen.
+
+        void CreateUser(User user);
+
     }
 }
 

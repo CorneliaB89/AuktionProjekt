@@ -1,4 +1,5 @@
 ﻿using AuktionProjekt.Models.Entities;
+using AuktionProjekt.Repository.Repo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,24 +14,47 @@ namespace AuktionProjekt.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        // NY KOD 2024.01.25,04:01 /Charbel
+        // Skapar constructor för att tillåta UserController använda UserRepo
+        private readonly UserRepo _userRepo;
+
+        public UserController(UserRepo userRepo)
+        {
+            _userRepo = userRepo;
+        } //SLUT
 
         [HttpPost]
         public IActionResult CreateUser(User user)
         {
-            return Ok();
+            // NY KOD 2024.01.25,12:51 /Charbel
+            _userRepo.CreateUser(user);
+            return Ok(); //SLUT
         }
         [Route("Login")]
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            // Kör repometoden för att kolla inloggningen
+            // NY KOD 2024.01.25,04:11 /Charbel
+            // Kör repometoden för att kolla inloggningen -> Done
+            // om den är null retunera badrequest("Invalied login") -> Done
+            var user = _userRepo.LoginUser(username, password);
 
-            // om den är null retunera badrequest("Invalied login")
+            if (user == null)
+            {
+                return BadRequest("Felaktig inloggning, försök igen!");
+            } // SLUT
+
+
+
 
             //gör en haskoll på Lösenordet
 
             List<Claim> claims = new List<Claim>();
-            //lägg till UserID i claim.nameindentifier
+            // NY KOD 2024.01.25,12:42 /Charbel
+            //lägg till UserID i claim.nameindentifier -> DONE
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString());
+            };
 
             //Sätta upp kryptering. Samma säkerhetsnyckel som när vi satte upp tjänsten
             //Denna förvaras på ett säkert ställe tex Azure Keyvault eller liknande och hårdkodas
@@ -58,6 +82,7 @@ namespace AuktionProjekt.Controllers
         [Authorize]
         public IActionResult UpdateUser(User user)
         {
+            _userRepo.UpdateUser(user);
             return Ok();
         }
     }

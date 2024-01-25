@@ -1,4 +1,5 @@
-﻿using AuktionProjekt.Models.Entities;
+﻿using AuktionProjekt.Models.DTO;
+using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Models.Repositories;
 using AuktionProjekt.Repository.Repo;
 using AuktionProjekt.ServiceLayer.IService;
@@ -23,16 +24,17 @@ namespace AuktionProjekt.Controllers
         {
             _bidService = bidService;
         }
+        [Route("PLace_Bid")]
         [HttpPost]
         [Authorize]
-        public IActionResult PlaceBid(Bid bid)
+        public IActionResult PlaceBid(PlaceBidDTO bid)
         {
             try
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                bid.User.UserID = int.Parse(userId);
+                int id = int.Parse(userId);
 
-                decimal outcome = _bidService.PlaceBid(bid);
+                decimal outcome = _bidService.PlaceBid(bid, id);
 
                 if (outcome == -1)
                     return NotFound("Den här auctionen finns inte");
@@ -56,8 +58,8 @@ namespace AuktionProjekt.Controllers
         }
 
 
-
-        [HttpGet("{auctionId}")]
+        
+        [HttpGet("{auctionId}/Get_Bids_For_Auction")]
         [Authorize]
         public IActionResult GetBids(int auctionId)
         {
@@ -74,8 +76,8 @@ namespace AuktionProjekt.Controllers
                 throw;
             }
         }
+        [Route("Get_WinningBid")]
         [HttpGet]
-        [Route("WinningBid")]
         public IActionResult GetWinningBid(int AuctionID)
         {
             try

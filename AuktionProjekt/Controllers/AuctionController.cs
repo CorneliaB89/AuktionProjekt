@@ -1,4 +1,5 @@
-﻿using AuktionProjekt.Models.Entities;
+﻿using AuktionProjekt.Models.DTO;
+using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Models.Repositories;
 using AuktionProjekt.ServiceLayer.IService;
 using Microsoft.AspNetCore.Authorization;
@@ -22,16 +23,17 @@ namespace AuktionProjekt.Controllers
         }
 
         // Logik för att skapa en auktion.
+        [Route("Create_Auctions")]
         [HttpPost]
         [Authorize]
-        public IActionResult CreateAuction(Auction auction)
+        public IActionResult CreateAuction(CreateAuctionDTO auction)
         {
             try
             {
                
                 var inloged = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                auction.User.UserID = int.Parse(inloged);
-                bool check = _auctionService.CreateAuction(auction);  
+                int id = int.Parse(inloged);
+                bool check = _auctionService.CreateAuction(auction, id);  
                 
                 if (check)
                 {
@@ -47,7 +49,9 @@ namespace AuktionProjekt.Controllers
         }
 
         //Logik för att ta fram alla auktioner.
+        
         [HttpGet]
+        [Route("All_Active_Auctions")]
         public IActionResult GetAllActiveAuctions()
         {
             try
@@ -64,7 +68,8 @@ namespace AuktionProjekt.Controllers
         }
 
         //logik för att söka på auktioner.
-        [HttpGet("{search}")]
+        
+        [HttpGet("{search}/Auctions")]
         public IActionResult SearchAuctions(string search)
         {
             try
@@ -78,6 +83,8 @@ namespace AuktionProjekt.Controllers
                 throw;
             }
         }
+
+        
         [Authorize]
         [HttpDelete("{auctionID}")]
         public IActionResult DeleteAuction(int auctionID)
@@ -91,9 +98,9 @@ namespace AuktionProjekt.Controllers
                 bool deleteauction = _auctionService.DeleteAuction(auctionID, inloggedUser);
                 if (deleteauction)
                 {
-                    return Ok("Auktionen har tagits bort");
+                    return Ok($"Auktionen med id: {auctionID} har tagits bort");
                 }
-                return BadRequest("Ej behörig att ta bort denna auktion"+ "Finns ingen auction med detta id"+ "Auktionen har bud och kan inte tas bort")
+                return BadRequest("Ej behörig att ta bort denna auktion / Finns ingen auction med detta id / Auktionen har bud och kan inte tas bort");
               }
             catch (Exception)
             {

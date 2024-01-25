@@ -52,20 +52,20 @@ namespace AuktionProjekt.ServiceLayer.Service
             return Tuple.Create(winningBid,2); // OK
         }
 
-        public decimal PlaceBid(Bid bid)
+        public decimal PlaceBid(PlaceBidDTO bid, int id)
         {
             try
             {
-                var auction = _auctionRepo.GetAuctionById(bid.Auction.AuctionID);
+                var auction = _auctionRepo.GetAuctionById(bid.AuctionsId);
                 if (auction is null)
                     return -1; //Notfound Den här auctionen finns inte
 
-                var bids = _bidRepo.GetBids(bid.Auction.AuctionID);
+                var bids = _bidRepo.GetBids(bid.AuctionsId);
 
                 if (auction.EndDate < DateTime.Now)
                     return -2; //Bad request Den här auktion är stängd
 
-                if (auction.User.UserID == bid.User.UserID)
+                if (auction.User.UserID == id)
                     return -3; //badrequest   Du kan inte lägga bud på din egen auktion
 
                 foreach (var b in bids)
@@ -73,7 +73,7 @@ namespace AuktionProjekt.ServiceLayer.Service
                     if (b.Price <= bid.Price)
                         return -4; //return BadRequest("Du måste lägga ett högre bud än vad som redan är lagt.");
                 }
-                _bidRepo.PlaceBid(bid);
+                _bidRepo.PlaceBid(bid, id);
                 return bid.Price; //OK bud har lagts
             }
             catch (Exception)

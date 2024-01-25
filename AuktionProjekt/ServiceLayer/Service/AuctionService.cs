@@ -1,4 +1,5 @@
-﻿using AuktionProjekt.Models.Entities;
+﻿using AuktionProjekt.Models.DTO;
+using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Models.Repositories;
 using AuktionProjekt.ServiceLayer.IService;
 using System.Security.Claims;
@@ -14,13 +15,13 @@ namespace AuktionProjekt.ServiceLayer.Service
             _auctionRepo = auctionRepo;
             _bidRepo = bidRepo;
         }
-        public bool CreateAuction(Auction auction)
+        public bool CreateAuction(CreateAuctionDTO auction, int id)
         {
             if (auction.Title == null || auction.Description == null || auction.Price.ToString() == null)
                 return false; //BadRequest("Glöm inte att lägga till all information");
 
             
-            _auctionRepo.CreateAuction(auction);
+            _auctionRepo.CreateAuction(auction, id);
 
             return true; //("Auction skapad");
         }

@@ -1,4 +1,5 @@
-﻿using AuktionProjekt.Models.Entities;
+﻿using AuktionProjekt.Models.DTO;
+using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Models.Repositories;
 using AuktionProjekt.Repository.Interfaces;
 using Dapper;
@@ -34,13 +35,13 @@ namespace AuktionProjekt.Repository.Repo
                 return searchedBids;
             }
         }
-        public void PlaceBid (Bid bid)
+        public void PlaceBid (PlaceBidDTO bid, int id)
         {
             using (IDbConnection db = _dbContext.GetConnection())
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@AuctionID", bid.Auction.AuctionID);
-                parameters.Add("@UserID", bid.User.UserID);
+                parameters.Add("@AuctionID", bid.AuctionsId);
+                parameters.Add("@UserID", id);
                 parameters.Add("@Price", bid.Price);
                 parameters.Add("@BidTime",DateTime.Now);
 

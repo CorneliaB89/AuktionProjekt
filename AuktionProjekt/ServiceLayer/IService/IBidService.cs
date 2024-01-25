@@ -7,6 +7,6 @@ namespace AuktionProjekt.ServiceLayer.IService
     {
         Tuple<BidDTO, int> GetWinningBid(int AuctionID);
         List<Bid>? GetBids(int auctionId);
-        decimal PlaceBid(Bid bid);
+        decimal PlaceBid(PlaceBidDTO bid, int id);
     }
 }

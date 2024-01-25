@@ -1,4 +1,5 @@
-﻿using AuktionProjekt.Models.Entities;
+﻿using AuktionProjekt.Models.DTO;
+using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Models.Repositories;
 using AuktionProjekt.Repository.Interfaces;
 using Dapper;
@@ -16,7 +17,7 @@ namespace AuktionProjekt.Repository.Repo
         }
 
 
-        public void CreateAuction(Auction auction)
+        public void CreateAuction(CreateAuctionDTO auction, int id)
         {
             using (IDbConnection db = _dbContext.GetConnection())
             {
@@ -26,7 +27,7 @@ namespace AuktionProjekt.Repository.Repo
                 parameters.Add("@Price", auction.Price);
                 parameters.Add("@StartDate", DateTime.Now);
                 parameters.Add("@EndDate", DateTime.Now.AddDays(5));
-                parameters.Add("@UserID", auction.User.UserID);
+                parameters.Add("@UserID", id);
 
                 db.Execute("CreateAuction", parameters, commandType: CommandType.StoredProcedure);
             }

@@ -21,7 +21,7 @@ namespace AuktionProjekt.Controllers
         {
             _userService = userService;
         }
-        [Route("Create/User")]
+        [Route("Create_User")]
         [HttpPost]
         public IActionResult CreateUser(User user)
         {
@@ -52,7 +52,7 @@ namespace AuktionProjekt.Controllers
             }
 
         }
-        [Route("Updaate/User")]
+        [Route("Update_User")]
         [HttpPut]
         [Authorize]
         public IActionResult UpdateUser(User user)

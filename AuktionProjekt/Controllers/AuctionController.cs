@@ -1,8 +1,10 @@
 ﻿using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Models.Repositories;
+using AuktionProjekt.ServiceLayer.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Security.Claims;
 
 namespace AuktionProjekt.Controllers
@@ -11,12 +13,12 @@ namespace AuktionProjekt.Controllers
     [ApiController]
     public class AuctionController : ControllerBase
     {
-        private readonly IAuctionRepo _auctionRepo;
-        private readonly IBidRepo _bidRepo;
-        public AuctionController(IAuctionRepo auctionRepo, IBidRepo bidRepo)
+        private readonly IAuctionService _auctionService;
+        
+        public AuctionController(IAuctionService auctionService)
         {
-            _auctionRepo = auctionRepo;
-            _bidRepo = bidRepo;
+            _auctionService = auctionService;
+           
         }
 
         // Logik för att skapa en auktion.
@@ -26,13 +28,16 @@ namespace AuktionProjekt.Controllers
         {
             try
             {
-                if (auction.Title == null || auction.Description == null || auction.Price.ToString() == null)
-                    return BadRequest("Glöm inte att lägga till all information");
-
+               
                 var inloged = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 auction.User.UserID = int.Parse(inloged);
-                _auctionRepo.CreateAuction(auction);
-                return Ok("Auction skapad");
+                bool check = _auctionService.CreateAuction(auction);  
+                
+                if (check)
+                {
+                    return Ok("Auction skapad");
+                }
+                return BadRequest("Glöm inte att lägga till all information");
             }
             catch (Exception)
             {
@@ -47,7 +52,7 @@ namespace AuktionProjekt.Controllers
         {
             try
             {
-                var activeAuctions = _auctionRepo.GetAllAuctions().Where(a => a.EndDate < DateTime.Now);
+                var activeAuctions = _auctionService.GetAllActiveAuctions();
                
                 return Ok(activeAuctions);
             }
@@ -64,19 +69,7 @@ namespace AuktionProjekt.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(search))
-                {
-                    // Om sökparametern är tom returneras ett felmeddelande.
-                    return BadRequest("Auktionens namn krävs.");
-                }
-
-                var searchedAuctions = _auctionRepo.SearchAuctions(search);
-
-                if (searchedAuctions == null || searchedAuctions.Count == 0)
-                {
-                    // Om inga auktioner hittas returneras ett svar.
-                    return NotFound("Inga auktioner hittades för den angivna sökande.");
-                }
+              var searchedAuctions = _auctionService.SearchAuctions(search);
                 return Ok(searchedAuctions);
             }
             catch (Exception)
@@ -91,34 +84,17 @@ namespace AuktionProjekt.Controllers
         {
             try
             {
-                // Hämta bud för auktionen
-                var bids = _bidRepo.GetBids(auctionID);
-
+               
                 // Hämta specific userId.
                 var loggedInUserID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                //Kolla behörighet för vald acution.
-                var auction = _auctionRepo.GetAuctionById(auctionID);
-
-                if (auction is null)
-                    return BadRequest("Finns ingen auction med detta id");
-
-                if (auction.User.UserID != int.Parse(loggedInUserID))
+                int inloggedUser= int.Parse(loggedInUserID);
+                bool deleteauction = _auctionService.DeleteAuction(auctionID, inloggedUser);
+                if (deleteauction)
                 {
-                    return Unauthorized("Ej behörig att ta bort denna auktion");
-                }
-                // Kontrollera att de ej finns några bud på auktionen
-                if (!bids.Any())
-                {
-                    // Ta bort auktionen om inga bud finns
-                    _auctionRepo.DeleteAuction(auctionID);
                     return Ok("Auktionen har tagits bort");
                 }
-                else
-                {
-                    return BadRequest("Auktionen har bud och kan inte tas bort");
-                }
-            }
+                return BadRequest("Ej behörig att ta bort denna auktion"+ "Finns ingen auction med detta id"+ "Auktionen har bud och kan inte tas bort")
+              }
             catch (Exception)
             {
                 return StatusCode(500,"Error, Delete Auction.");

@@ -20,7 +20,7 @@ namespace AuktionProjekt.ServiceLayer.Service
             if (auction.Title == null || auction.Description == null || auction.Price.ToString() == null)
                 return false; //BadRequest("Glöm inte att lägga till all information");
 
-            
+
             _auctionRepo.CreateAuction(auction, id);
 
             return true; //("Auction skapad");
@@ -31,7 +31,7 @@ namespace AuktionProjekt.ServiceLayer.Service
             // Hämta bud för auktionen
             var bids = _bidRepo.GetBids(auctionID);
 
-           
+
 
             //Kolla behörighet för vald acution.
             var auction = _auctionRepo.GetAuctionById(auctionID);
@@ -39,7 +39,7 @@ namespace AuktionProjekt.ServiceLayer.Service
             if (auction is null)
                 return false; //BadRequest("Finns ingen auction med detta id");
 
-            if (auction.User.UserID !=loggedInUserID)
+            if (auction.User.UserID != loggedInUserID)
             {
                 return false; //Unauthorized("Ej behörig att ta bort denna auktion");
             }
@@ -60,17 +60,47 @@ namespace AuktionProjekt.ServiceLayer.Service
         {
             var activeAuctions = _auctionRepo.GetAllAuctions().Where(a => a.EndDate < DateTime.Now);
 
-            return activeAuctions.ToList(); 
+            return activeAuctions.ToList();
         }
 
         public List<Auction> SearchAuctions(string search)
         {
-           
+
 
             var searchedAuctions = _auctionRepo.SearchAuctions(search);
 
-          
+
             return searchedAuctions;
+        }
+        public int UpdateAuction(Auction auction)
+        {
+            try
+            {
+                var auctionToUpdate = _auctionRepo.GetAuctionById(auction.AuctionID);
+
+                if (auctionToUpdate is null)
+                    return -1; //Auctionen finns inte
+
+                if (auctionToUpdate.User.UserID != auction.User.UserID)
+                    return 0; //Ej behörig att updatera auctionen (du har inte skapat denna auction)
+
+                var bidsOnAuction = _bidRepo.GetBids(auction.AuctionID);
+
+                if (bidsOnAuction is null)
+                {
+                    _auctionRepo.UpdateAuction(auction);
+                    return 1;  //Allt Uppdaterat 
+                }
+
+                auction.Price = auctionToUpdate.Price;
+                _auctionRepo.UpdateAuction(auction);
+                return 2;  //Uppdaterat men inte priset.
+            }
+            catch (Exception)
+            {
+                return 3;
+                
+            }
         }
     }
 }

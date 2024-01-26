@@ -5,6 +5,7 @@ using AuktionProjekt.ServiceLayer.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using System;
 using System.Security.Claims;
 
@@ -107,6 +108,28 @@ namespace AuktionProjekt.Controllers
                 return StatusCode(500,"Error, Delete Auction.");
                 throw;
             }
+        }
+        [Route("Update_Auction")]
+        [Authorize]
+        [HttpPut]
+        public IActionResult UpdateAuction(Auction auction)
+        {
+            var inlogedUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            auction.User.UserID = int.Parse(inlogedUser);
+
+           int check = _auctionService.UpdateAuction(auction);
+
+            if (check == -1)
+                return NotFound("Auktionen finns inte");
+            if (check == 0)
+                return Unauthorized("Ej behörig att updatera denna aktion");
+            if (check == 1)
+                return Ok($"Auktion med id: {auction.AuctionID} är Uppdaterat");
+            if(check == 2)
+                return Ok($"Auktion med id {auction.AuctionID} är updaterat. Priset är inte uppdaterat för det finns redan bud på denna auktion.");
+
+            return StatusCode(500, "Error, UpdateAuction");
+                        
         }
     }
 }

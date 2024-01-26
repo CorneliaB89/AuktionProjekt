@@ -10,6 +10,7 @@ namespace AuktionProjekt.ServiceLayer.IService
         List<Auction> GetAllActiveAuctions();
         List<Auction> SearchAuctions(string search);
         bool DeleteAuction(int auctionID, int loggedInUserID);
+        int UpdateAuction(Auction auction);
 
     }
 }

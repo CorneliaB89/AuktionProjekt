@@ -12,6 +12,6 @@ namespace AuktionProjekt.Models.Repositories
         List<Auction>? SearchAuctions(string search);
         Auction? GetAuctionById(int auctionId);
         List<Auction> GetAllAuctions();
-                
+        
     }
 }

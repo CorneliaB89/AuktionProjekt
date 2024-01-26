@@ -25,22 +25,22 @@ namespace AuktionProjekt.ServiceLayer.Service
                       
         }
 
-        public Tuple<BidDTO, int> GetWinningBid(int AuctionID)
+        public (BidDTO, int) GetWinningBid(int AuctionID)
         {
             var bidDTO = new BidDTO();
             var auction = _auctionRepo.GetAuctionById(AuctionID);
             if (auction is null)
-                return Tuple.Create(bidDTO, 0); //NotFound Denna auctionfinns inte.
+                return (bidDTO, 0); //NotFound Denna auctionfinns inte.
 
             if (auction.EndDate > DateTime.Now)
-                return Tuple.Create(bidDTO, 1); //BadRequest("Den här auktion är fortfarande öppen");
+                return (bidDTO, 1); //BadRequest("Den här auktion är fortfarande öppen");
 
             var highestbid = new Bid() { Price = 0 };
 
             var bids = _bidRepo.GetBids(AuctionID);
 
             if (bids is null)
-                return Tuple.Create(bidDTO, -1);
+                return (bidDTO, -1);
 
             foreach (var b in bids)
             {
@@ -49,7 +49,7 @@ namespace AuktionProjekt.ServiceLayer.Service
             }
             var winningBid = _mapper.Map<BidDTO>(highestbid);
 
-            return Tuple.Create(winningBid,2); // OK
+            return (winningBid, 2); // OK
         }
 
         public decimal PlaceBid(PlaceBidDTO bid, int id)

@@ -6,7 +6,7 @@ namespace AuktionProjekt.ServiceLayer.IService
     public interface IBidService
     {
         (BidDTO, int) GetWinningBid(int AuctionID);
-        List<Bid>? GetBids(int auctionId);
+        List<BidDTO>? GetBids(int auctionId);
         decimal PlaceBid(PlaceBidDTO bid, int id);
     }
 }

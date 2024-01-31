@@ -31,7 +31,7 @@ namespace AuktionProjekt.Repository.Repo
                           bids.Auction= auctions;
                           return bids;
 
-                      },param:parameters, splitOn: "Username,AuctionID", commandType: CommandType.StoredProcedure).ToList();
+                      },param:parameters, splitOn: "Username, AuctionID", commandType: CommandType.StoredProcedure).ToList();
                 return searchedBids;
             }
         }
@@ -43,7 +43,6 @@ namespace AuktionProjekt.Repository.Repo
                 parameters.Add("@AuctionID", bid.AuctionsId);
                 parameters.Add("@UserID", id);
                 parameters.Add("@Price", bid.Price);
-                parameters.Add("@BidTime",DateTime.Now);
 
                 db.Execute("PlaceBid", parameters, commandType:CommandType.StoredProcedure);
 

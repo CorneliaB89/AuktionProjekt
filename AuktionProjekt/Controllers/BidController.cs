@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -66,7 +67,7 @@ namespace AuktionProjekt.Controllers
             try
             {
                 var bids = _bidService.GetBids(auctionId);
-                if (bids is null) return NotFound("Det finns inga bud på denna auktion");
+                if (bids.IsNullOrEmpty()) return NotFound("Det finns inga bud på denna auktion");
 
                 return Ok(bids);
             }

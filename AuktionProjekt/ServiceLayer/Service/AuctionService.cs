@@ -2,6 +2,7 @@
 using AuktionProjekt.Models.Entities;
 using AuktionProjekt.Models.Repositories;
 using AuktionProjekt.ServiceLayer.IService;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace AuktionProjekt.ServiceLayer.Service
@@ -58,9 +59,9 @@ namespace AuktionProjekt.ServiceLayer.Service
 
         public List<Auction> GetAllActiveAuctions()
         {
-            var activeAuctions = _auctionRepo.GetAllAuctions().Where(a => a.EndDate < DateTime.Now);
+            var activeAuctions = _auctionRepo.GetAllAuctions().Where(a => a.EndDate > DateTime.Now).ToList();
 
-            return activeAuctions.ToList();
+            return activeAuctions;
         }
 
         public List<Auction> SearchAuctions(string search)
@@ -86,7 +87,7 @@ namespace AuktionProjekt.ServiceLayer.Service
 
                 var bidsOnAuction = _bidRepo.GetBids(auction.AuctionID);
 
-                if (bidsOnAuction is null)
+                if (bidsOnAuction.IsNullOrEmpty())
                 {
                     _auctionRepo.UpdateAuction(auction);
                     return 1;  //Allt Uppdaterat 

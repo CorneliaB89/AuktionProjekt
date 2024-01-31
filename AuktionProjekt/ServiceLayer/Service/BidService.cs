@@ -4,6 +4,7 @@ using AuktionProjekt.Models.Repositories;
 using AuktionProjekt.ServiceLayer.IService;
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace AuktionProjekt.ServiceLayer.Service
@@ -19,10 +20,19 @@ namespace AuktionProjekt.ServiceLayer.Service
             _auctionRepo = auctionRepo;
             _mapper = mapper;
         }
-        public List<Bid>? GetBids(int auctionId)
+        public List<BidDTO>? GetBids(int auctionId)
         {
-            return _bidRepo.GetBids(auctionId);
-                      
+            var bids = _bidRepo.GetBids(auctionId);
+            var bidDto = new List<BidDTO>();
+
+            foreach (var bid in bids)
+            {
+                var mappedBid = _mapper.Map<BidDTO>(bid);
+                bidDto.Add(mappedBid);
+            }
+
+            return bidDto;
+
         }
 
         public (BidDTO, int) GetWinningBid(int AuctionID)
@@ -39,7 +49,7 @@ namespace AuktionProjekt.ServiceLayer.Service
 
             var bids = _bidRepo.GetBids(AuctionID);
 
-            if (bids is null)
+            if (bids.IsNullOrEmpty())
                 return (bidDTO, -1);
 
             foreach (var b in bids)
@@ -70,7 +80,7 @@ namespace AuktionProjekt.ServiceLayer.Service
 
                 foreach (var b in bids)
                 {
-                    if (b.Price <= bid.Price)
+                    if (b.Price >= bid.Price)
                         return -4; //return BadRequest("Du måste lägga ett högre bud än vad som redan är lagt.");
                 }
                 _bidRepo.PlaceBid(bid, id);
@@ -83,7 +93,7 @@ namespace AuktionProjekt.ServiceLayer.Service
             }
 
 
-            
+
         }
     }
 }

@@ -26,7 +26,7 @@ namespace AuktionProjekt.Repository.Repo
                 parameters.Add("@Description", auction.Description);
                 parameters.Add("@Price", auction.Price);
                 parameters.Add("@StartDate", DateTime.Now);
-                parameters.Add("@EndDate", DateTime.Now.AddMinutes(15));
+                parameters.Add("@EndDate", DateTime.Now.AddDays(15));
                 parameters.Add("@UserID", id);
 
                 db.Execute("CreateAuction", parameters, commandType: CommandType.StoredProcedure);
